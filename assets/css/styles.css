@@ -811,7 +811,7 @@ input {
 /* For small devices */
 @media screen and (max-width: 340px) {
   .place__container {
-    grid-template-columns: max-content;
+    grid-template-columns: repeat(1, max-content);
     justify-content: center;
   }
   .experience__content {
@@ -832,7 +832,12 @@ input {
     padding: 0;
   }
 }
-
+@media screen and (max-width: 440px) {
+  .place__container {
+    grid-template-columns: repeat(1, max-content);
+    justify-content: center;
+  }
+}
 /* For medium devices */
 @media screen and (min-width: 568px) {
   .video__container {
