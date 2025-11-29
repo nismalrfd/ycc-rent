@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YCC Rent Details</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #f7fbfe;
+            padding: 30px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* --- BUTTON GROUP --- */
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Red gradient buttons (Income, Expense) */
+        .red-btn {
+            padding: 8px 16px;
+            border-color: #afafaf;
+            color: #201818;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #ffffff;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        /* Logout button - now matching style */
+        .logout-btn {
+            padding: 8px 16px;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        /* Hover → black (same as submit) */
+        .red-btn:hover,
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
+                    }
+
+        /* Inputs */
+        .form-group { margin-bottom: 22px; }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .search-input, .custom-select-trigger, #amount {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .search-input:focus, #amount:focus {
+            border-color: #667eea;
+        }
+
+        /* Dropdown */
+        .search-dropdown { position: relative; }
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #667eea;
+            background: white;
+            display: none;
+            z-index: 1000;
+        }
+
+        .dropdown-list.show { display: block; }
+        .dropdown-item { padding: 12px; cursor: pointer; }
+        .dropdown-item:hover { background: #f5f5f5; }
+
+        /* Payment select */
+        .custom-select { position: relative; }
+
+        .custom-select-trigger {
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-select-options {
+            position: absolute;
+            background: white;
+            width: 100%;
+            display: none;
+            border: 2px solid #667eea;
+            border-top: none;
+            z-index: 1000;
+        }
+
+        .custom-select-options.show { display: block; }
+        .custom-option { padding: 12px; cursor: pointer; }
+        .custom-option:hover { background: #f0f0f0; }
+
+        /* Submit button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            color: white;
+            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .submit-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>Rent Details</h1>
+
+            <!-- NEW BUTTONS added here -->
+            <div class="button-group">
+                <button class="red-btn">Income</button>
+                <button class="red-btn">Expense</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <form id="rentForm">
+
+            <!-- Tenant Search -->
+            <div class="form-group">
+                <label>Name</label>
+                <div class="search-dropdown">
+                    <input type="text" id="tenantSearch" class="search-input" placeholder="Search member…" autocomplete="off">
+                    <div class="dropdown-list" id="tenantDropdown"></div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-group">
+                <label>Payment Method</label>
+                <div class="custom-select">
+                    <div class="custom-select-trigger" id="paymentTrigger">
+                        <span id="paymentSelected">Select payment method</span>
+                    </div>
+                    <div class="custom-select-options" id="paymentOptions">
+                        <div class="custom-option" data-value="UPI">UPI</div>
+                        <div class="custom-option" data-value="Cash">Cash</div>
+                    </div>
+                </div>
+                <input type="hidden" id="paymentMethod" required>
+            </div>
+
+            <!-- Amount -->
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="amount" placeholder="Enter amount" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+
+<script>
+// ---------------- Login Check ----------------
+if (!sessionStorage.getItem('isLoggedIn')) {
+    window.location.href = "index.html";
+}
+
+// ---------------- Tenant List ----------------
+const tenants = [
+    "John Smith","Mary Johnson","Robert Williams","Patricia Brown",
+    "Michael Davis","Jennifer Garcia","William Miller","Linda Wilson",
+    "David Moore","Elizabeth Taylor"
+];
+
+const tenantSearch = document.getElementById("tenantSearch");
+const tenantDropdown = document.getElementById("tenantDropdown");
+
+function showTenantList() {
+    tenantDropdown.innerHTML = "";
+    tenants.forEach(name => {
+        let item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.textContent = name;
+        item.onclick = () => {
+            tenantSearch.value = name;
+            tenantDropdown.classList.remove("show");
+        };
+        tenantDropdown.appendChild(item);
+    });
+}
+
+tenantSearch.addEventListener("focus", () => {
+    showTenantList();
+    tenantDropdown.classList.add("show");
+});
+
+tenantSearch.addEventListener("input", () => {
+    let term = tenantSearch.value.toLowerCase();
+    [...tenantDropdown.children].forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(term) ? "block" : "none";
+    });
+});
+
+// ---------------- Payment Select ----------------
+const paymentTrigger = document.getElementById("paymentTrigger");
+const paymentOptions = document.getElementById("paymentOptions");
+const paymentSelected = document.getElementById("paymentSelected");
+const paymentHidden = document.getElementById("paymentMethod");
+
+paymentTrigger.onclick = () => {
+    paymentOptions.classList.toggle("show");
+};
+
+document.querySelectorAll(".custom-option").forEach(option => {
+    option.onclick = () => {
+        paymentSelected.textContent = option.textContent;
+        paymentHidden.value = option.dataset.value;
+        paymentOptions.classList.remove("show");
+    };
+});
+
+// ---------------- Form Submit ----------------
+const GOOGLE_WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbyuWh4OHOqL3D_QHmLWvcVB6LJ3gvUUMwL0TmWWVGp7pri3FtzZRo-xcV9P0xS1Khzf/exec";
+
+function submitForm() {
+    const tenant = tenantSearch.value;
+    const method = paymentHidden.value;
+    const amount = document.getElementById("amount").value;
+
+    if (!tenant || !method || !amount) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    const payload = { tenant, paymentMethod: method, amount };
+
+    fetch(GOOGLE_WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "text/plain" }
+    })
+    .then(r => r.text())
+    .then(response => {
+        alert(response);
+
+        tenantSearch.value = "";
+        paymentHidden.value = "";
+        paymentSelected.textContent = "Select payment method";
+        document.getElementById("amount").value = "";
+        tenantDropdown.classList.remove("show");
+        paymentOptions.classList.remove("show");
+    })
+    .catch(console.error);
+}
+
+document.getElementById("rentForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    submitForm();
+});
+
+// ---------------- Logout ----------------
+function logout() {
+    sessionStorage.removeItem("isLoggedIn");
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
