@@ -1,113 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Club Payment Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - YCC</title>
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
-        .container {
-            background: white;
-            padding: 20px;
+
+        .login-container {
+            background: #f7fbfe;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
             max-width: 400px;
-            margin: auto;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
             text-align: center;
         }
+
+        .logo-circle {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto 20px auto;
+}
+
+.logo-circle img {
+    width: 95%;
+    height: 95%;
+    object-fit: contain;
+}
+
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
         label {
-            font-weight: bold;
-            margin-top: 10px;
             display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
         }
-        select, input, button {
+
+        input {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
         }
-        button {
-            background: #4CAF50;
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
             color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 15px;
         }
-        button:hover {
-            background: #45a049;
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Club Payment Form</h2>
+    <div class="login-container">
 
-    <form id="paymentForm">
-        <!-- Member List -->
-        <label for="member">Select Member</label>
-        <select id="member" name="member" required>
-            <option value="">--Choose Member--</option>
-            <option value="John">John</option>
-            <option value="Alex">Alex</option>
-            <option value="Meena">Meena</option>
-            <option value="Rahul">Rahul</option>
-        </select>
+        <!-- Center Logo -->
+        <div class="logo-circle">
+            <img src="logo.jpg" alt="YCC Logo">
+        </div>
 
-        <!-- Payment Method -->
-        <label for="method">Payment Method</label>
-        <select id="method" name="method" required>
-            <option value="">--Choose Method--</option>
-            <option value="Cash">Cash</option>
-            <option value="UPI">UPI</option>
-        </select>
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+            </div>
 
-        <!-- Amount -->
-        <label for="amount">Amount</label>
-        <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
 
-        <button type="submit">Submit</button>
-    </form>
+            <button type="submit" class="login-btn">Login</button>
 
-    <p id="msg" style="color: green; margin-top: 15px;"></p>
-</div>
+            <div class="error-message" id="errorMessage">Invalid username or password</div>
+        </form>
+
+    </div>
 
 <script>
-document.getElementById("paymentForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const member = document.getElementById("member").value;
-    const method = document.getElementById("method").value;
-    const amount = document.getElementById("amount").value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
 
-    // Google Apps Script Web App URL
-    const url = "https://script.google.com/macros/s/AKfycbzU3-qvj6cNw39-cXkk3YLfkd7EUo6XWtMEwL9MJTANTbxl9_7adkHLFotDJ89jPpeB/exec";
-
-    fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ member, method, amount }),
-        headers: {
-            "Content-Type": "application/json"
+        if (username === 'admin' && password === 'admin123') {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'rent-details.html';
+        } else {
+            errorMessage.classList.add('show');
+            setTimeout(() => errorMessage.classList.remove('show'), 3000);
         }
-    })
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById("msg").innerText =
-            "Saved: " + member + " - " + method + " - ₹" + amount;
-
-        document.getElementById("paymentForm").reset();
-    })
-    .catch(err => {
-        document.getElementById("msg").innerText = "Error saving data!";
-        console.error(err);
     });
-});
 </script>
 
 </body>
 </html>
-
