@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YCC Rent Details</title>
-
+    <title>Rent Details</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 15px;
         }
-
         .container {
             max-width: 600px;
             margin: 20px auto;
@@ -22,299 +19,321 @@
             border-radius: 10px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        /* --- BUTTON GROUP --- */
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        /* Red gradient buttons (Income, Expense) */
-        .red-btn {
-            padding: 8px 16px;
-            border-color: #afafaf;
-            color: #201818;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #ffffff;
-            transition: 0.3s;
-            font-weight: bold;
-        }
-
-        /* Logout button - now matching style */
-        .logout-btn {
-            padding: 8px 16px;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
-            transition: 0.3s;
-            font-weight: bold;
-        }
-
-        /* Hover → black (same as submit) */
-        .red-btn:hover,
-        .logout-btn:hover {
-            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
-                    }
-
-        /* Inputs */
-        .form-group { margin-bottom: 22px; }
-
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: #333; font-size: 24px; }
+        .form-group { margin-bottom: 25px; }
         label {
-            display: block;
-            margin-bottom: 7px;
-            color: #555;
-            font-size: 14px;
-            font-weight: 500;
+            display: block; margin-bottom: 8px; color: #555;
+            font-weight: 500; font-size: 14px;
         }
-
-        .search-input, .custom-select-trigger, #amount {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 15px;
+        input, select, textarea {
+            width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0;
+            border-radius: 6px; font-size: 15px; background: white;
+            transition: border-color 0.3s;
         }
-
-        .search-input:focus, #amount:focus {
-            border-color: #667eea;
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: #af0512;
         }
+        .submit-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
+            color: white; border: none; border-radius: 6px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+        }
+        .logout-btn {
+            padding: 8px 16px; background: transparent; color: #af0512;
+            border: 2px solid #af0512; border-radius: 6px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+        .tab-buttons { text-align:center; margin-bottom:20px; }
+        .tab-buttons button {
+            padding:10px 20px; margin: 0 5px;
+            border:2px solid #af0512;
+            background:white; border-radius:6px; cursor:pointer;
+            font-weight:600; color:#af0512;
+        }
+        .tab-buttons button.active { background:#af0512; color:white; }
 
-        /* Dropdown */
-        .search-dropdown { position: relative; }
+        /* --- Dropdown CSS --- */
         .dropdown-list {
             position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            max-height: 200px;
+            width: 100%;
+            background: #fff;
+            border: 1px solid #ccc;
+            max-height: 180px;
             overflow-y: auto;
-            border: 2px solid #667eea;
-            background: white;
             display: none;
-            z-index: 1000;
+            z-index: 10;
         }
-
         .dropdown-list.show { display: block; }
-        .dropdown-item { padding: 12px; cursor: pointer; }
-        .dropdown-item:hover { background: #f5f5f5; }
-
-        /* Payment select */
-        .custom-select { position: relative; }
-
-        .custom-select-trigger {
-            cursor: pointer;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .dropdown-item {
+            padding: 10px; cursor: pointer;
+            border-bottom: 1px solid #eee;
         }
-
-        .custom-select-options {
-            position: absolute;
-            background: white;
-            width: 100%;
-            display: none;
-            border: 2px solid #667eea;
-            border-top: none;
-            z-index: 1000;
-        }
-
-        .custom-select-options.show { display: block; }
-        .custom-option { padding: 12px; cursor: pointer; }
-        .custom-option:hover { background: #f0f0f0; }
-
-        /* Submit button */
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            color: white;
-            background: linear-gradient(135deg, #af0512 0%, #f9090b 100%);
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.25s;
-        }
-
-        .submit-btn:hover {
-            background: #000;
-            transform: translateY(-2px);
-        }
+        .dropdown-item:hover { background: #f1f1f1; }
+        .search-dropdown { position: relative; }
     </style>
 </head>
-
 <body>
 
-    <div class="container">
-
-        <div class="header">
-            <h1>Rent Details</h1>
-
-            <!-- NEW BUTTONS added here -->
-            <div class="button-group">
-                <button class="red-btn">Income</button>
-                <button class="red-btn">Expense</button>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-
-        <form id="rentForm">
-
-            <!-- Tenant Search -->
-            <div class="form-group">
-                <label>Name</label>
-                <div class="search-dropdown">
-                    <input type="text" id="tenantSearch" class="search-input" placeholder="Search member…" autocomplete="off">
-                    <div class="dropdown-list" id="tenantDropdown"></div>
-                </div>
-            </div>
-
-            <!-- Payment Method -->
-            <div class="form-group">
-                <label>Payment Method</label>
-                <div class="custom-select">
-                    <div class="custom-select-trigger" id="paymentTrigger">
-                        <span id="paymentSelected">Select payment method</span>
-                    </div>
-                    <div class="custom-select-options" id="paymentOptions">
-                        <div class="custom-option" data-value="UPI">UPI</div>
-                        <div class="custom-option" data-value="Cash">Cash</div>
-                    </div>
-                </div>
-                <input type="hidden" id="paymentMethod" required>
-            </div>
-
-            <!-- Amount -->
-            <div class="form-group">
-                <label>Amount</label>
-                <input type="number" id="amount" placeholder="Enter amount" required>
-            </div>
-
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
+    <div class="tab-buttons">
+        <button id="btnRent" class="active" onclick="showSection('rentSection', 'btnRent')">Rent Details</button>
+        <button id="btnIncome" onclick="showSection('incomeSection', 'btnIncome')">Other Income</button>
+        <button id="btnExpense" onclick="showSection('expenseSection', 'btnExpense')">Expenses</button>
     </div>
 
+    <div class="container">
+        <div class="header">
+            <h1>YCC Entry</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- RENT SECTION -->
+        <div id="rentSection" class="formSection">
+            <form id="rentForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <div class="search-dropdown">
+                        <input type="text" id="tenantSearch" placeholder="Search member…" autocomplete="off">
+                        <div class="dropdown-list" id="tenantDropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select payment method</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Rent Amount</label>
+                    <input type="number" id="Rentamount" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Rent</button>
+            </form>
+        </div>
+
+        <!-- INCOME SECTION -->
+        <div id="incomeSection" class="formSection" style="display:none;">
+            <form id="incomeForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="incomeName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="incomeAmount" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="incomePayment" required>
+                        <option value="">Select Mode</option>
+                        <option>UPI</option>
+                        <option>Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Narration</label>
+                    <textarea id="IncomeNarration" rows="3" required></textarea>
+                </div>
+
+                <button class="submit-btn" type="submit">Submit Income</button>
+            </form>
+        </div>
+
+        <!-- EXPENSE SECTION -->
+        <div id="expenseSection" class="formSection" style="display:none;">
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label>Category</label>
+                    <div class="search-dropdown">
+                        <input type="text" id="expenseCategory" placeholder="Search category…" autocomplete="off">
+                        <div class="dropdown-list" id="categoryDropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="expenseAmount" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="expensePayment" required>
+                        <option value="">Select Mode</option>
+                        <option>UPI</option>
+                        <option>Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Narration</label>
+                    <textarea id="expenseNarration" rows="3" required></textarea>
+                </div>
+
+                <button class="submit-btn" type="submit">Submit Expense</button>
+            </form>
+        </div>
+
+    </div>
 
 <script>
-// ---------------- Login Check ----------------
-if (!sessionStorage.getItem('isLoggedIn')) {
-    window.location.href = "index.html";
-}
-
-// ---------------- Tenant List ----------------
-const tenants = [
-    "John Smith","Mary Johnson","Robert Williams","Patricia Brown",
-    "Michael Davis","Jennifer Garcia","William Miller","Linda Wilson",
-    "David Moore","Elizabeth Taylor"
-];
-
-const tenantSearch = document.getElementById("tenantSearch");
-const tenantDropdown = document.getElementById("tenantDropdown");
-
-function showTenantList() {
-    tenantDropdown.innerHTML = "";
-    tenants.forEach(name => {
-        let item = document.createElement("div");
-        item.className = "dropdown-item";
-        item.textContent = name;
-        item.onclick = () => {
-            tenantSearch.value = name;
-            tenantDropdown.classList.remove("show");
-        };
-        tenantDropdown.appendChild(item);
-    });
-}
-
-tenantSearch.addEventListener("focus", () => {
-    showTenantList();
-    tenantDropdown.classList.add("show");
-});
-
-tenantSearch.addEventListener("input", () => {
-    let term = tenantSearch.value.toLowerCase();
-    [...tenantDropdown.children].forEach(item => {
-        item.style.display = item.textContent.toLowerCase().includes(term) ? "block" : "none";
-    });
-});
-
-// ---------------- Payment Select ----------------
-const paymentTrigger = document.getElementById("paymentTrigger");
-const paymentOptions = document.getElementById("paymentOptions");
-const paymentSelected = document.getElementById("paymentSelected");
-const paymentHidden = document.getElementById("paymentMethod");
-
-paymentTrigger.onclick = () => {
-    paymentOptions.classList.toggle("show");
-};
-
-document.querySelectorAll(".custom-option").forEach(option => {
-    option.onclick = () => {
-        paymentSelected.textContent = option.textContent;
-        paymentHidden.value = option.dataset.value;
-        paymentOptions.classList.remove("show");
-    };
-});
-
-// ---------------- Form Submit ----------------
-const GOOGLE_WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbyuWh4OHOqL3D_QHmLWvcVB6LJ3gvUUMwL0TmWWVGp7pri3FtzZRo-xcV9P0xS1Khzf/exec";
-
-function submitForm() {
-    const tenant = tenantSearch.value;
-    const method = paymentHidden.value;
-    const amount = document.getElementById("amount").value;
-
-    if (!tenant || !method || !amount) {
-        alert("Please fill all fields!");
-        return;
+    /* ------- LOGIN CHECK ------- */
+    if (!sessionStorage.getItem('isLoggedIn')) {
+        window.location.href = 'index.html';
     }
 
-    const payload = { tenant, paymentMethod: method, amount };
+    function showSection(sectionId, btnId) {
+        document.querySelectorAll('.formSection').forEach(s => s.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
 
-    fetch(GOOGLE_WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "text/plain" }
-    })
-    .then(r => r.text())
-    .then(response => {
-        alert(response);
+        document.querySelectorAll('.tab-buttons button').forEach(b => b.classList.remove('active'));
+        document.getElementById(btnId).classList.add('active');
+    }
 
-        tenantSearch.value = "";
-        paymentHidden.value = "";
-        paymentSelected.textContent = "Select payment method";
-        document.getElementById("amount").value = "";
-        tenantDropdown.classList.remove("show");
-        paymentOptions.classList.remove("show");
-    })
-    .catch(console.error);
-}
+    const GOOGLE_WEB_APP_URL =
+     "https://script.google.com/macros/s/AKfycbyuWh4OHOqL3D_QHmLWvcVB6LJ3gvUUMwL0TmWWVGp7pri3FtzZRo-xcV9P0xS1Khzf/exec";
 
-document.getElementById("rentForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    submitForm();
-});
+    /* ---------- TENANT DROPDOWN ---------- */
+    const tenants = [
+        "John Smith","Mary Johnson","Robert Williams","Patricia Brown",
+        "Michael Davis","Jennifer Garcia","William Miller","Linda Wilson",
+        "David Moore","Elizabeth Taylor"
+    ];
 
-// ---------------- Logout ----------------
-function logout() {
-    sessionStorage.removeItem("isLoggedIn");
-    window.location.href = "index.html";
-}
+    const tenantSearch = document.getElementById("tenantSearch");
+    const tenantDropdown = document.getElementById("tenantDropdown");
+
+    function showTenantList() {
+        tenantDropdown.innerHTML = "";
+        tenants.forEach(name => {
+            let item = document.createElement("div");
+            item.className = "dropdown-item";
+            item.textContent = name;
+            item.onclick = () => {
+                tenantSearch.value = name;
+                tenantDropdown.classList.remove("show");
+            };
+            tenantDropdown.appendChild(item);
+        });
+    }
+
+    tenantSearch.addEventListener("focus", () => {
+        showTenantList();
+        tenantDropdown.classList.add("show");
+    });
+
+    tenantSearch.addEventListener("input", () => {
+        let term = tenantSearch.value.toLowerCase();
+        [...tenantDropdown.children].forEach(item => {
+            item.style.display = item.textContent.toLowerCase().includes(term) ? "block" : "none";
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!tenantSearch.contains(e.target)) tenantDropdown.classList.remove("show");
+    });
+
+    /* ---------- CATEGORY DROPDOWN ---------- */
+    const categories = [
+        "Electricity",
+        "Water Bill",
+        "Maintenance",
+        "Repairs",
+        "Cleaning",
+        "Printing",
+        "Stationery",
+        "Miscellaneous"
+    ];
+
+    const expenseCategory = document.getElementById("expenseCategory");
+    const categoryDropdown = document.getElementById("categoryDropdown");
+
+    function showCategoryList() {
+        categoryDropdown.innerHTML = "";
+        categories.forEach(cat => {
+            let item = document.createElement("div");
+            item.className = "dropdown-item";
+            item.textContent = cat;
+            item.onclick = () => {
+                expenseCategory.value = cat;
+                categoryDropdown.classList.remove("show");
+            };
+            categoryDropdown.appendChild(item);
+        });
+    }
+
+    expenseCategory.addEventListener("focus", () => {
+        showCategoryList();
+        categoryDropdown.classList.add("show");
+    });
+
+    expenseCategory.addEventListener("input", () => {
+        let term = expenseCategory.value.toLowerCase();
+        [...categoryDropdown.children].forEach(item => {
+            item.style.display = item.textContent.toLowerCase().includes(term) ? "block" : "none";
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!expenseCategory.contains(e.target)) categoryDropdown.classList.remove("show");
+    });
+
+    /* ---------- FORM SUBMIT HANDLERS ---------- */
+    document.getElementById("rentForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        sendToGoogle({
+            type: "rent",
+            tenant: tenantSearch.value,
+            paymentMethod: document.getElementById("paymentMethod").value,
+            rentAmount: document.getElementById("Rentamount").value
+        });
+    });
+
+    document.getElementById("incomeForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        sendToGoogle({
+            type: "income",
+            name: document.getElementById("incomeName").value,
+            amount: document.getElementById("incomeAmount").value,
+            paymentMethod: document.getElementById("incomePayment").value,
+            narration: document.getElementById("IncomeNarration").value
+        });
+    });
+
+    document.getElementById("expenseForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        sendToGoogle({
+            type: "expense",
+            category: document.getElementById("expenseCategory").value,
+            amount: document.getElementById("expenseAmount").value,
+            paymentMethod: document.getElementById("expensePayment").value,
+            narration: document.getElementById("expenseNarration").value
+        });
+    });
+
+    function sendToGoogle(payload) {
+        fetch(GOOGLE_WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "text/plain" }
+        })
+        .then(r => r.text())
+        .then(alert)
+        .catch(console.error);
+    }
+
+    function logout() {
+        sessionStorage.removeItem('isLoggedIn');
+        window.location.href = 'index.html';
+    }
 </script>
 
 </body>
